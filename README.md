@@ -1,6 +1,6 @@
 # Autocomplete Component
 
-This is a VueJS standalone component. It fetches users and repositories from Github.
+This is a VueJS standalone component. It fetches users and repositories from Github. You can find a demo [here](https://jsfiddle.net/calvinguillot/6b28ux4z/5/).
 
 Use arrows and mouse to navigate, and enter or click to go to a selected item URL.
 
