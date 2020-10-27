@@ -33,7 +33,7 @@
 
 <script>
 export default {
-  name: "AutoComplete2",
+  name: "AutoComplete",
   data() {
     return {
       loading: false,
@@ -42,7 +42,7 @@ export default {
       arrowPos: 0,
       items: [],
       minInit: 3,
-      maxSearch: 50,
+      maxSearch: 25,
       sortBy: "title",
       placeHolder: "Search GitHub",
       serverTimeout: 3000,
@@ -50,10 +50,11 @@ export default {
   },
   methods: {
     search(event) {
-      if (event.target.value.length > this.minInit) {
+      if (event.target.value.length > this.minInit) {       // Minimum 3 characters are required to start the search
         this.opened = true;
         this.loading = true;
-        clearTimeout(this.debounce);
+        
+        clearTimeout(this.debounce);                        // Key inputs must be grouped before sending
         this.debounce = setTimeout(() => {
           this.searchGit(event.target.value);
         }, this.serverTimeout);
@@ -69,7 +70,7 @@ export default {
       ]);
 
       Promise.all([users, repos]).then((values) => {
-        this.items = values[0].concat(values[1]);
+        this.items = values[0].concat(values[1]);           // Both types of request are joined. Each have 25 items
         this.loading = false;
       });
     },
@@ -88,13 +89,13 @@ export default {
 
             data.items.forEach((e) => {
               const filtered = Object.keys(e)
-                .filter((key) => properties.includes(key))
+                .filter((key) => properties.includes(key))  // Only requeired properties are filtered
                 .reduce((obj, key) => {
                   obj[key] = e[key];
                   return obj;
                 }, {});
-              filtered.type = type;
-              filtered.title = filtered[properties[0]];
+              filtered.type = type;                        // Type is assigned
+              filtered.title = filtered[properties[0]];    // Common propertiy is assigned
 
               results.push(filtered);
             });
@@ -106,13 +107,13 @@ export default {
     selectedItem(result) {
       this.open = false;
       this.arrowCounter = -1;
-      window.open(result.html_url, "_blank");
+      window.open(result.html_url, "_blank");             // Open in a new tab
     },
     arrowDown() {
       if (this.arrowPos < this.items.length - 1) {
         this.arrowPos = this.arrowPos + 1;
         let active = document.getElementsByClassName("is-active");
-        active[0].scrollIntoView();
+        active[0].scrollIntoView();                       // Scroll "is-active" child
       }
     },
     arrowUp() {
@@ -120,14 +121,14 @@ export default {
         this.arrowPos = this.arrowPos - 1;
         let active = document.getElementsByClassName("is-active");
         let parent = document.getElementById("auto-results");
-        parent.scrollBy(0, -active[0].clientHeight);
+        parent.scrollBy(0, -active[0].clientHeight);      // Scroll parent element to accomodate "is-active" child
       }
     },
     enterKey() {
       this.selectedItem(this.sortResults[this.arrowPos]);
     },
     clickOut(event) {
-      if (!this.$el.contains(event.target)) {
+      if (!this.$el.contains(event.target)) {            // Detect if there is a click-event outside the component
         this.opened = false;
         this.arrowPos = -1;
       }
@@ -136,7 +137,7 @@ export default {
   computed: {
     sortResults() {
       let results = this.items;
-      results.sort((a, b) => a[this.sortBy].localeCompare(b[this.sortBy]));
+      results.sort((a, b) => a[this.sortBy].localeCompare(b[this.sortBy])); // Sort items alphabetically
       return results;
     },
   },
